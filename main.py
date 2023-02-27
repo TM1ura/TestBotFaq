@@ -1,7 +1,7 @@
 import logging
 from aiogram import Bot, Dispatcher, types, executor
 from config import TOKEN
-from Keyboard import kb, inlineKbHelp, inlineKbForm, inlineKb
+from Keyboard import kb, inlineKbHelp, inlineKbForm, inlineKb, inlineKbDeclaration, inlineKbConsert
 from messageAnalys import analys_question
 
 bot = Bot(TOKEN, parse_mode='HTML')
@@ -35,10 +35,17 @@ async def callbackYes(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id, text="Загрузка")
 
     if callback_query.data == 'Yes':
-        await bot.send_message(callback_query.message.chat.id, '')
+        await bot.send_message(callback_query.message.chat.id, 'Спасибо за вопрос')
 
     elif callback_query.data == 'No':
         await bot.send_message(callback_query.message.chat.id, 'К сожалению, я не знаю ответа на ваш вопрос, но вы можете задать свой вопрос напрямую приемной комиссии, по форме:', reply_markup=inlineKbForm)
+
+    elif callback_query.data == 'Declaration':
+        await bot.edit_message_text('Выберите уровень образования', callback_query.message.chat.id, callback_query.message.message_id, reply_markup=inlineKbDeclaration)
+
+    elif callback_query.data == 'Consert':
+        await bot.edit_message_text('Выберите уровень образования', callback_query.message.chat.id, callback_query.message.message_id, reply_markup=inlineKbConsert)
+
 
 # Обработка текстового сообщения
 @dp.message_handler()
