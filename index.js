@@ -17,7 +17,6 @@ const morph = new Morphy('ru', {
   use_ancodes_cache: false,
   resolve_ancodes: Morphy.RESOLVE_ANCODES_AS_TEXT,
 });
-
 const FAQ = data.FAQ;
 
 // Обработка команды Старт
@@ -49,7 +48,7 @@ bot.onText(/\/start/, (msg) => {
 bot.onText(/FAQ/, (msg) =>{
   const chatId = msg.chat.id;
 
-  bot.sendMessage(chatId,'Просто напишите мне "FAQ: ваш вопрос" и я постараюсь найти на него ответ или задайте его напрямую приемной комиссии по форме',     
+  bot.sendMessage(chatId,'Просто напишите мне "Вопрос: ваш вопрос" и я постараюсь найти на него ответ или задайте его напрямую приемной комиссии по форме',     
   {
     reply_markup: JSON.stringify({
       inline_keyboard: [
