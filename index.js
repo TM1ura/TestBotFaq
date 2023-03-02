@@ -23,7 +23,7 @@ const FAQ = data.FAQ;
 // Обработка команды Старт
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-  
+
   bot.sendMessage(
     chatId,
     `Привет! Я могу проконсультировать тебя по любому вопросу
@@ -110,8 +110,11 @@ bot.onText(/Вопрос: (.+)/, (msg, match) =>{
 
   result = similarity.findBestMatch(textMsg, questions);
 
+  console.log(result['bestMatch']['rating']);
+
+  if(result['bestMatch']['rating'] >= 0.5){  
   bot.sendMessage(chatId, FAQ[result['bestMatchIndex']].answer + '\n\nЕсли я не ответил на ваш вопрос, то вы можете задать вопрос напрямую приемной комиссии по форме:',     
-  {
+    {
     reply_markup: JSON.stringify({
       inline_keyboard: [
         [
@@ -124,5 +127,38 @@ bot.onText(/Вопрос: (.+)/, (msg, match) =>{
         ],
       ],
     })
-  });
+    });
+  } else if(result['bestMatch']['rating'] >= 0.2){
+    bot.sendMessage(chatId, 'Возможно вас устроит этот ответ, в ином случае попробуйте уточнить ваш вопрос или задайте его напрямую приемной комиссии\n\n' + FAQ[result['bestMatchIndex']].answer,     
+    {
+      reply_markup: JSON.stringify({
+        inline_keyboard: [
+          [
+            {
+              text: "Заполнить форму",
+              web_app: {
+                url: priemUrl,
+              },
+            },
+          ],
+        ],
+      })
+    });
+  }else{
+    bot.sendMessage(chatId, 'Я не нашел ответ на ваш вопрос, но вы можете задать вопрос напрямую приемной комиссии по форме:',     
+    {
+      reply_markup: JSON.stringify({
+        inline_keyboard: [
+          [
+            {
+              text: "Заполнить форму",
+              web_app: {
+                url: priemUrl,
+              },
+            },
+          ],
+        ],
+      })
+    });
+  };
 });
