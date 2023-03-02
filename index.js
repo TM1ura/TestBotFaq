@@ -23,8 +23,7 @@ const FAQ = data.FAQ;
 // Обработка команды Старт
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
-
-  //bot.setChatMenuButton(chatId, {web_app:{url:priemUrl}}) - проверить
+  
   bot.sendMessage(
     chatId,
     `Привет! Я могу проконсультировать тебя по любому вопросу
@@ -110,8 +109,6 @@ bot.onText(/Вопрос: (.+)/, (msg, match) =>{
   };
 
   result = similarity.findBestMatch(textMsg, questions);
-
-  console.log(textMsg.isNaN);
 
   bot.sendMessage(chatId, FAQ[result['bestMatchIndex']].answer + '\n\nЕсли я не ответил на ваш вопрос, то вы можете задать вопрос напрямую приемной комиссии по форме:',     
   {
