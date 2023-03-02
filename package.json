@@ -9,7 +9,7 @@
   "author": "MASU",
   "license": "ISC",
   "dependencies": {
-    "fuzzysearch": "^1.0.3",
+    "strstring-similarity": "4.0.4",
     "node-telegram-bot-api": "^0.61.0",
     "nodemon": "^2.0.20"
   }
