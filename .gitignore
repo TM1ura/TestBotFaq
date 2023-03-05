@@ -4,5 +4,5 @@
 
 #nonproject files
 .idea/
-__pycashe__
+__pycache__
 EGE.db
