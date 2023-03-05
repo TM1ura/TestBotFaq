@@ -14,4 +14,14 @@ async def fetchEGE(ege1, ege2):
 
     answer = ''.join(("//-" + row[0] + "\n\n") for row in rows )
 
+    try:
+        if len(answer) > 0:
+            answer = "Вот на какие направления вы можете подать заявления: \n" + answer
+
+        else:
+            answer = "Я не нашел подходящие вам направления"
+
+    except:
+            answer = "Произошла ошибка, попробуйте снова"
+
     return answer

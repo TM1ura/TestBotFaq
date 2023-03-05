@@ -7,7 +7,7 @@ inlineKbDeclaration = InlineKeyboardMarkup(row_width=1)
 inlineKbConsert = InlineKeyboardMarkup(row_width=1)
 inlineKbEge1 = InlineKeyboardMarkup(row_width=2)
 inlineKbEge2 = InlineKeyboardMarkup(row_width=2)
-inlineKb = InlineKeyboardMarkup(row_width=2)
+inlineKbYesNo = InlineKeyboardMarkup(row_width=1)
 
 # Ссылки для webApp
 urlTime = WebAppInfo(url='https://www.masu.edu.ru/abit/rules/application/')
@@ -68,4 +68,4 @@ inlineKbDeclaration.add(inlineDecBachelor, inlineDecMagistracy, inlineDecPostgra
 inlineKbConsert.add(inlineConsBM, inlineConsPostgraduate)
 inlineKbEge1.add(inlineEge1Math, inlineEge1ICT, inlineEge1Phys, inlineEge1Geo, inlineEge1Bio, inlineEge1Chem, inlineEge1Soc, inlineEge1Lit, inlineEge1History, inlineEge1ForLang)
 inlineKbEge2.add(inlineEge2Math, inlineEge2ICT, inlineEge2Phys, inlineEge2Geo, inlineEge2Bio, inlineEge2Chem, inlineEge2Soc, inlineEge2Lit, inlineEge2History, inlineEge2ForLang)
-inlineKb.add(inlineYes, inlineNo)
+inlineKbYesNo.add(inlineYes, inlineNo)
