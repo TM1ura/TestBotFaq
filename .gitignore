@@ -5,4 +5,4 @@
 #nonproject files
 .idea/
 __pycache__
-EGE.db
+exams.db

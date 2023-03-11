@@ -1,6 +1,6 @@
 import aiosqlite
 async def fetchEGE(ege1, ege2):
-    db = await aiosqlite.connect('EGE.db')
+    db = await aiosqlite.connect('exams.db')
     cursor = await db.execute(f'''SELECT Направление 
                                     FROM StudyProg 
                                     INNER JOIN Subjects as S on StudyProg.ЕГЭ_1 = S.id 

@@ -2,7 +2,7 @@ import json
 import codecs
 import pymorphy3
 from thefuzz import fuzz
-from Keyboard import inlineKbForm, inlineKbYesNo
+from tgBot.keyboard.inline import inlineKbForm, inlineKbYesNo
 
 # Создание морфологического анализатора
 morph = pymorphy3.MorphAnalyzer()

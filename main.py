@@ -1,116 +1,94 @@
 import logging
-from aiogram import Bot, Dispatcher, types, executor
-from config import TOKEN
-from Keyboard import kb, inlineKbHelp, inlineKbForm, inlineKbDeclaration, inlineKbConsert, inlineKbEge1, inlineKbEge2
-from messageAnalys import analys_question
-from db import fetchEGE
+import asyncio
+import sqlite3
+import codecs
+from os import path
+from aiogram import Bot, Dispatcher
+from tgBot.config import TOKEN
+from tgBot.filtres.buttons import FaqFilter, HelpFilter, TestFilter, CalculatorFilter
+from tgBot.filtres.callbacks import YesOrNoFilter, DeclarationFilter, ConsertFilter, ExamFilter
+from tgBot.handlers.buttons import register_buttons
+from tgBot.handlers.questions import register_question
+from tgBot.handlers.commands import register_commands
+from tgBot.handlers.callbacks import register_callbacks
 
 bot = Bot(token=TOKEN,
           parse_mode='HTML')
 
 dp = Dispatcher(bot)
-logger = logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-egeList = []
+# Регистрация фильтров
+async def register_all_filtres():
+    dp.filters_factory.bind(callback=FaqFilter,
+                            event_handlers=[dp.message_handlers])
+    dp.filters_factory.bind(callback=HelpFilter,
+                            event_handlers=[dp.message_handlers])
+    dp.filters_factory.bind(callback=TestFilter,
+                            event_handlers=[dp.message_handlers])
+    dp.filters_factory.bind(callback=CalculatorFilter,
+                            event_handlers=[dp.message_handlers])
+    dp.filters_factory.bind(callback=YesOrNoFilter,
+                            event_handlers=[dp.callback_query_handlers])
+    dp.filters_factory.bind(callback=DeclarationFilter,
+                            event_handlers=[dp.callback_query_handlers])
+    dp.filters_factory.bind(callback=ConsertFilter,
+                            event_handlers=[dp.callback_query_handlers])
+    dp.filters_factory.bind(callback=ExamFilter,
+                            event_handlers=[dp.callback_query_handlers])
 
-# Обработка команды Старт
-@dp.message_handler(commands=['start'])
-async def welcome(message: types.Message):
-    await message.answer(text='Приветствую, я чат-бот.\n Я могу проконсультировать вас по вопросам поступления в "МАГУ"',
-                         reply_markup=kb)
-    await bot.set_chat_menu_button(message.chat.id, types.MenuButtonWebApp(text='Абитуриенту',
-                                                                           web_app=types.WebAppInfo(url='https://www.masu.edu.ru/abit/')))
+# Регистрация хендлеров
+async def register_all_handlers():
+    register_buttons(dispatcher=dp)
+    register_commands(dispatcher=dp)
+    register_question(dispatcher=dp)
+    register_callbacks(dispatcher=dp)
 
-# Обработка кнопок
-@dp.message_handler(text=['FAQ'])
-async def faq(message: types.Message):
-    await message.answer(text='Просто напишите мне ваш вопрос и я постараюсь найти на него ответ или задайте его напрямую приемной комиссии по форме',
-                         reply_markup=inlineKbForm)
+# Проверка существует ли БД
+async def check_db():
+    if path.isfile('exams.db'):
+        logger.info('exams.db already initiated')
+    else:
+        logger.info('Initialization exams.db')
+        db = sqlite3.connect('exams.db')
+        init = codecs.open('tgBot/services/db_init.sql', encoding='utf-8', mode='r')
+        insert = codecs.open('tgBot/services/db_input.sql', encoding='utf-8', mode='r')
 
+        query = "".join(init.readlines())
+        db.executescript(query)
+        init.close()
 
-@dp.message_handler(text=['Полезная информация'])
-async def help(message: types.Message):
-    await message.answer(text='Выберите интересующую вас тему',
-                         reply_markup=inlineKbHelp)
+        query = "".join(insert.readlines())
+        db.executescript(query)
+        insert.close()
 
-@dp.message_handler(text=['Тест на профориентацию'])
-async def help(message: types.Message):
-    await message.answer(text='Тест на профориентацию в разработке')
+        db.close()
+        logger.info('exams.db initiated')
+async def main():
+    logging.basicConfig(level=logging.INFO,
+                        format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s')
 
-@dp.message_handler(text=['Калькулятор ЕГЭ'])
-async def EGE(message: types.Message):
-    await message.answer(text='Какие экзамены вы сдавали/будете сдавать',
-                         reply_markup=inlineKbEge1)
+    logger.info(f"Starting bot: {(await bot.get_me()).full_name}[{(await bot.get_me()).username}]")
 
-# Обработка Callback'ов от inline-кнопок
-@dp.callback_query_handler(lambda c: c.data)
-async def callbackYes(callback_query: types.CallbackQuery):
-    await bot.answer_callback_query(callback_query_id=callback_query.id,
-                                    text="Загрузка")
+    await check_db()
+    await register_all_filtres()
+    await register_all_handlers()
 
-    if callback_query.data == 'Yes':
-        analysResult = analys_question(callback_query.message.text.split(':')[1])
+    try:
+        await dp.start_polling()
 
-        await bot.edit_message_text(text=analysResult[0].split('\n')[0],
-                                    chat_id=callback_query.message.chat.id,
-                                    message_id=callback_query.message.message_id,
-                                    reply_markup=None)
+    except ConnectionError as conError:
+        logger.error('Connection error:', conError)
 
-    elif callback_query.data == 'No':
-        await bot.edit_message_text(text='К сожалению, я не знаю ответа на ваш вопрос, но вы можете задать свой вопрос напрямую приемной комиссии, по форме:',
-                                    chat_id=callback_query.message.chat.id,
-                                    message_id=callback_query.message.message_id,
-                                    reply_markup=inlineKbForm)
-
-    # Заявление/Согласие на зачисление
-    elif callback_query.data == 'Declaration':
-        await bot.edit_message_text(text='Выберите уровень образования',
-                                    chat_id=callback_query.message.chat.id,
-                                    message_id=callback_query.message.message_id,
-                                    reply_markup=inlineKbDeclaration)
-
-    elif callback_query.data == 'Consert':
-        await bot.edit_message_text(text='Выберите уровень образования',
-                                    chat_id=callback_query.message.chat.id,
-                                    message_id=callback_query.message.message_id,
-                                    reply_markup=inlineKbConsert)
-
-    # Калькулятор ЕГЭ
-    elif callback_query.data.split(":")[0] == 'EGE1':
-        egeList.append(callback_query.data.split(":")[1])
-        await bot.edit_message_reply_markup(chat_id=callback_query.message.chat.id,
-                                            message_id=callback_query.message.message_id,
-                                            reply_markup=inlineKbEge2)
-
-    elif callback_query.data.split(":")[0] == 'EGE2':
-        egeList.append(callback_query.data.split(":")[1])
-        await bot.delete_message(chat_id=callback_query.message.chat.id,
-                                 message_id=callback_query.message.message_id)
-
-        ege = await fetchEGE(ege1=egeList[0],
-                             ege2=egeList[1])
-
-        await bot.send_message(chat_id=callback_query.message.chat.id,
-                                text=ege)
-
-        egeList.clear()
-
-# Обработка текстового сообщения
-@dp.message_handler()
-async def message(message: types.Message):
-    analysResult = analys_question(text=message.text)
-
-    await message.answer(text=analysResult[0],
-                         reply_markup=analysResult[1])
-
+    except Exception as error:
+        logger.error(error)
+    finally:
+        # Закрытие сессии
+        await (await bot.get_session()).close()
+        logger.info("Stop bot")
 
 if __name__ == '__main__':
     try:
-        executor.start_polling(dispatcher=dp,
-                               skip_updates=False)
-
-    except ConnectionError as conErorr:
-        print('Connection error:', conErorr)
-
-    except Exception as erorr:
-        print('Error:', erorr)
+        asyncio.run(main())
+    except (KeyboardInterrupt, SystemExit):
+        logger.error("Bot stopped!")
