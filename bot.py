@@ -6,7 +6,7 @@ from os import path
 from aiogram import Bot, Dispatcher
 from tgBot.config import TOKEN
 from tgBot.filtres.buttons import FaqFilter, HelpFilter, TestFilter, CalculatorFilter
-from tgBot.filtres.callbacks import YesOrNoFilter, DeclarationFilter, ConsertFilter, ExamFilter
+from tgBot.filtres.callbacks import YesCallbackFilter, NoCallbackFilter, DeclarationFilter, ConsertFilter, ExamFilter, BackToHelpFilter
 from tgBot.handlers.buttons import register_buttons
 from tgBot.handlers.questions import register_question
 from tgBot.handlers.commands import register_commands
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 # Регистрация фильтров
 async def register_all_filtres():
+    # фильтры текста
     dp.filters_factory.bind(callback=FaqFilter,
                             event_handlers=[dp.message_handlers])
     dp.filters_factory.bind(callback=HelpFilter,
@@ -28,11 +29,17 @@ async def register_all_filtres():
                             event_handlers=[dp.message_handlers])
     dp.filters_factory.bind(callback=CalculatorFilter,
                             event_handlers=[dp.message_handlers])
-    dp.filters_factory.bind(callback=YesOrNoFilter,
+
+    # фильтры callback'ов
+    dp.filters_factory.bind(callback=YesCallbackFilter,
+                            event_handlers=[dp.callback_query_handlers])
+    dp.filters_factory.bind(callback=NoCallbackFilter,
                             event_handlers=[dp.callback_query_handlers])
     dp.filters_factory.bind(callback=DeclarationFilter,
                             event_handlers=[dp.callback_query_handlers])
     dp.filters_factory.bind(callback=ConsertFilter,
+                            event_handlers=[dp.callback_query_handlers])
+    dp.filters_factory.bind(callback=BackToHelpFilter,
                             event_handlers=[dp.callback_query_handlers])
     dp.filters_factory.bind(callback=ExamFilter,
                             event_handlers=[dp.callback_query_handlers])

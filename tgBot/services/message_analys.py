@@ -2,7 +2,7 @@ import json
 import codecs
 import pymorphy3
 from thefuzz import fuzz
-from tgBot.keyboard.inline import inlineKbForm, inlineKbYesNo
+from tgBot.keyboard.inline import inline_kb_form, inline_kb_yes_no
 
 # Создание морфологического анализатора
 morph = pymorphy3.MorphAnalyzer()
@@ -29,15 +29,18 @@ def analys_question(text):
     score = max(scores)
     question = questions[scores.index(max(scores))]
 
-    # Проверка нашлись ли совпадения
+    # Проверка, нашлись ли совпадения
     if score >= 50:
-        answer = (f'{data[questions[scores.index(max(scores))]]}. \n Если я не ответил на ваш вопрос, то вы можете задать вопрос напрямую приемной комиссии по форме:', inlineKbForm)
+        answer = (f'{data[questions[scores.index(max(scores))]]}. \n Если я не ответил на ваш вопрос, то вы можете задать вопрос напрямую приемной комиссии по форме:',
+                  inline_kb_form)
 
     elif score >= 30:
-        answer = (f'Я не нашел ответ на ваш вопрос, возможно вы имели в виду этот вопрос:\n {question}.', inlineKbYesNo)
+        answer = (f'Я не нашел ответ на ваш вопрос, возможно вы имели в виду этот вопрос:\n {question}.',
+                  inline_kb_yes_no)
 
     else:
-        answer = ('Я не нашел ответ на ваш вопрос, но вы можете задать вопрос напрямую приемной комиссии по форме:', inlineKbForm)
+        answer = ('Я не нашел ответ на ваш вопрос, но вы можете задать вопрос напрямую приемной комиссии по форме:',
+                  inline_kb_form)
 
 
     return answer

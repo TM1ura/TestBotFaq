@@ -1,6 +1,6 @@
 from aiogram import types, Dispatcher
-from tgBot.services.messageAnalys import analys_question
-from tgBot.keyboard.inline import inlineKbForm, inlineKbDeclaration, inlineKbConsert
+from tgBot.services.message_analys import analys_question
+from tgBot.keyboard.inline import inline_kb_form, inline_kb_declaration, inline_kb_consert, inline_kb_help
 from tgBot.services.db import fetchEGE
 
 exams = []
@@ -18,20 +18,26 @@ async def no(callback_query: types.CallbackQuery):
     await callback_query.bot.edit_message_text(text='К сожалению, я не знаю ответа на ваш вопрос, но вы можете задать свой вопрос напрямую приемной комиссии, по форме:',
                                 chat_id=callback_query.message.chat.id,
                                 message_id=callback_query.message.message_id,
-                                reply_markup=inlineKbForm)
+                                reply_markup=inline_kb_form)
 
 # Заявление/Согласие на зачисление
 async def declaration(callback_query: types.CallbackQuery):
     await callback_query.bot.edit_message_text(text='Выберите уровень образования',
                                 chat_id=callback_query.message.chat.id,
                                 message_id=callback_query.message.message_id,
-                                reply_markup=inlineKbDeclaration)
+                                reply_markup=inline_kb_declaration)
 
 async def consert(callback_query: types.CallbackQuery):
     await callback_query.bot.edit_message_text(text='Выберите уровень образования',
                                 chat_id=callback_query.message.chat.id,
                                 message_id=callback_query.message.message_id,
-                                reply_markup=inlineKbConsert)
+                                reply_markup=inline_kb_consert)
+
+async def back_to_help(callback_query: types.CallbackQuery):
+    await callback_query.bot.edit_message_text(text='Выберите интересующую вас тему',
+                                chat_id=callback_query.message.chat.id,
+                                message_id=callback_query.message.message_id,
+                                reply_markup=inline_kb_help)
 
 # Калькулятор ЕГЭ
 async def exam(callback_query: types.CallbackQuery):
@@ -52,12 +58,14 @@ async def exam(callback_query: types.CallbackQuery):
 
 def register_callbacks(dispatcher:Dispatcher):
     dispatcher.register_callback_query_handler(callback=yes,
-                                               data_yn='is_yes')
+                                               data_yes=True)
     dispatcher.register_callback_query_handler(callback=no,
-                                               data_yn='is_no')
+                                               data_no=True)
     dispatcher.register_callback_query_handler(callback=declaration,
                                                data_declaration=True)
     dispatcher.register_callback_query_handler(callback=consert,
                                                data_consert=True)
+    dispatcher.register_callback_query_handler(callback=back_to_help,
+                                               data_to_help=True)
     dispatcher.register_callback_query_handler(callback=exam,
                                                data_exam=True)

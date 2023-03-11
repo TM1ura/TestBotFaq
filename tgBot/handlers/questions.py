@@ -1,5 +1,5 @@
 from aiogram import types, Dispatcher
-from tgBot.services.messageAnalys import analys_question
+from tgBot.services.message_analys import analys_question
 
 # Обработка вопроса
 async def question(message: types.Message):

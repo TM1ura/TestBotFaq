@@ -3,29 +3,34 @@ from aiogram.dispatcher.filters import BoundFilter
 from typing import Union
 
 # Фильтры для кнопок
-class YesOrNoFilter(BoundFilter):
-    key = 'data_yn'
+class YesCallbackFilter(BoundFilter):
+    key = 'data_yes'
 
-    def __init__(self, data_yn: Union[str, bool]):
-        self.data_yn = data_yn
+    def __init__(self, data_yes: Union[str, bool]):
+        self.data_yes = data_yes
     async def check(self, callback: CallbackQuery):
         if callback.data == 'Yes':
-            self.data_yn = 'is_yes'
-            return self.data_yn
-        elif callback.data == 'No':
-            self.data_yn = 'is_no'
-            return self.data_yn
-        return self.data_yn is False
+            return self.data_yes is True
+        return self.data_yes is False
 
+class NoCallbackFilter(BoundFilter):
+    key = 'data_no'
+
+    def __init__(self, data_no: bool):
+        self.data_no = data_no
+    async def check(self, callback: CallbackQuery):
+        if callback.data == 'No':
+            return self.data_no is True
+        return self.data_no is False
 class DeclarationFilter(BoundFilter):
     key = 'data_declaration'
 
     def __init__(self, data_declaration: bool):
-        self.data_yes = data_declaration
+        self.data_declaration = data_declaration
     async def check(self, callback: CallbackQuery):
         if callback.data == 'Declaration':
-            return self.data_yes is True
-        return self.data_yes is False
+            return self.data_declaration is True
+        return self.data_declaration is False
 
 class ConsertFilter(BoundFilter):
     key = 'data_consert'
@@ -37,6 +42,15 @@ class ConsertFilter(BoundFilter):
             return self.data_consert is True
         return self.data_consert is False
 
+class BackToHelpFilter(BoundFilter):
+    key = 'data_to_help'
+
+    def __init__(self, data_to_help: bool):
+        self.data_to_help = data_to_help
+    async def check(self, callback: CallbackQuery):
+        if callback.data == 'Back to help':
+            return self.data_to_help is True
+        return self.data_to_help is False
 class ExamFilter(BoundFilter):
     key = 'data_exam'
 
