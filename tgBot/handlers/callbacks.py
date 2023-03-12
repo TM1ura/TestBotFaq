@@ -1,9 +1,8 @@
 from aiogram import types, Dispatcher
-from tgBot.services.message_analys import analys_question
-from tgBot.keyboard.inline import inline_kb_form, inline_kb_declaration, inline_kb_consert, inline_kb_help
-from tgBot.services.db import fetchEGE
-
-exams = []
+from aiogram.dispatcher.storage import FSMContext
+from tgBot.services import analys_question
+from tgBot.keyboard import inline_kb_form, inline_kb_declaration, inline_kb_consert, inline_kb_help
+from tgBot.states import ExamState
 
 # Обработка Callback'ов от inline-кнопок
 async def yes(callback_query: types.CallbackQuery):
@@ -40,21 +39,17 @@ async def back_to_help(callback_query: types.CallbackQuery):
                                 reply_markup=inline_kb_help)
 
 # Калькулятор ЕГЭ
-async def exam(callback_query: types.CallbackQuery):
-    if len(exams) == 0:
-        exams.append(callback_query.data.split(":")[1])
+async def exam1(callback_query: types.CallbackQuery, state:FSMContext):
+    await callback_query.message.answer('Укажите баллы за первый экзамен по выбору')
+    await state.update_data(exam1=callback_query.data.split(":")[1])
+    await ExamState.exam1.set()
+    await callback_query.message.delete()
 
-    elif len(exams) == 1:
-        exams.append(callback_query.data.split(":")[1])
-        await callback_query.message.delete()
-
-        study_prog = await fetchEGE(ege1=exams[0],
-                             ege2=exams[1])
-
-        await callback_query.bot.send_message(chat_id=callback_query.message.chat.id,
-                                text=study_prog)
-
-        exams.clear()
+async def exam2(callback_query: types.CallbackQuery, state: FSMContext):
+    await callback_query.message.answer('Укажите баллы за второй экзамен по выбору')
+    await state.update_data(exam2=callback_query.data.split(":")[1])
+    await callback_query.message.delete()
+    await ExamState.exam2.set()
 
 def register_callbacks(dispatcher:Dispatcher):
     dispatcher.register_callback_query_handler(callback=yes,
@@ -67,5 +62,9 @@ def register_callbacks(dispatcher:Dispatcher):
                                                data_consert=True)
     dispatcher.register_callback_query_handler(callback=back_to_help,
                                                data_to_help=True)
-    dispatcher.register_callback_query_handler(callback=exam,
-                                               data_exam=True)
+    dispatcher.register_callback_query_handler(callback=exam2,
+                                               data_exam=True,
+                                               state=ExamState.exam1)
+    dispatcher.register_callback_query_handler(callback=exam1,
+                                               data_exam=True,
+                                               state=ExamState.pre_exam)

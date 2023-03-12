@@ -1,5 +1,6 @@
 from aiogram import types, Dispatcher
-from tgBot.keyboard.inline import inline_kb_form, inline_kb_help, inline_kb_exam
+from tgBot.keyboard import inline_kb_form, inline_kb_help, inline_kb_exam
+from tgBot.states import ExamState
 
 # Обработка кнопок
 async def faq(message: types.Message):
@@ -15,8 +16,8 @@ async def career_orient_test(message: types.Message):
     await message.answer(text='Тест на профориентацию в разработке')
 
 async def calculator_ege(message: types.Message):
-    await message.answer(text='Какие экзамены вы сдавали/будете сдавать',
-                         reply_markup=inline_kb_exam)
+    await message.answer(text='Укажите ваши баллы за экзамен по русскому языку (только число, например: 40) ')
+    await ExamState.pre_exam.set()
 
 def register_buttons(dispatcher:Dispatcher):
     dispatcher.register_message_handler(callback=faq,

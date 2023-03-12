@@ -1,21 +1,18 @@
 import logging
 import asyncio
-import sqlite3
-import codecs
-from os import path
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from tgBot.config import TOKEN
-from tgBot.filtres.buttons import FaqFilter, HelpFilter, TestFilter, CalculatorFilter
-from tgBot.filtres.callbacks import YesCallbackFilter, NoCallbackFilter, DeclarationFilter, ConsertFilter, ExamFilter, BackToHelpFilter
-from tgBot.handlers.buttons import register_buttons
-from tgBot.handlers.questions import register_question
-from tgBot.handlers.commands import register_commands
-from tgBot.handlers.callbacks import register_callbacks
+from tgBot.filtres import FaqFilter, HelpFilter, TestFilter, CalculatorFilter, YesCallbackFilter, NoCallbackFilter, DeclarationFilter, ConsertFilter, ExamFilter, BackToHelpFilter
+from tgBot.handlers import register_buttons, register_question, register_commands, register_callbacks, register_exams_scores
+from tgBot.services import check_db
 
 bot = Bot(token=TOKEN,
-          parse_mode='HTML')
+          parse_mode=types.ParseMode.HTML)
+storage = MemoryStorage()
 
-dp = Dispatcher(bot)
+dp = Dispatcher(bot,
+                storage=storage)
 logger = logging.getLogger(__name__)
 
 # Регистрация фильтров
@@ -50,34 +47,15 @@ async def register_all_handlers():
     register_commands(dispatcher=dp)
     register_question(dispatcher=dp)
     register_callbacks(dispatcher=dp)
+    register_exams_scores(dispatcher=dp)
 
-# Проверка существует ли БД
-async def check_db():
-    if path.isfile('exams.db'):
-        logger.info('exams.db already initiated')
-    else:
-        logger.info('Initialization exams.db')
-        db = sqlite3.connect('exams.db')
-        init = codecs.open('tgBot/services/db_init.sql', encoding='utf-8', mode='r')
-        insert = codecs.open('tgBot/services/db_input.sql', encoding='utf-8', mode='r')
-
-        query = "".join(init.readlines())
-        db.executescript(query)
-        init.close()
-
-        query = "".join(insert.readlines())
-        db.executescript(query)
-        insert.close()
-
-        db.close()
-        logger.info('exams.db initiated')
 async def main():
     logging.basicConfig(level=logging.INFO,
                         format=u'%(filename)s:%(lineno)d #%(levelname)-8s [%(asctime)s] - %(name)s - %(message)s')
 
     logger.info(f"Starting bot: {(await bot.get_me()).full_name}[{(await bot.get_me()).username}]")
 
-    await check_db()
+    await check_db(logger=logger)
     await register_all_filtres()
     await register_all_handlers()
 

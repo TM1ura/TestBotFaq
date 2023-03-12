@@ -1,12 +1,11 @@
 from aiogram.types import CallbackQuery
 from aiogram.dispatcher.filters import BoundFilter
-from typing import Union
 
 # Фильтры для кнопок
 class YesCallbackFilter(BoundFilter):
     key = 'data_yes'
 
-    def __init__(self, data_yes: Union[str, bool]):
+    def __init__(self, data_yes: bool):
         self.data_yes = data_yes
     async def check(self, callback: CallbackQuery):
         if callback.data == 'Yes':

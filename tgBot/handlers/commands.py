@@ -1,5 +1,5 @@
 from aiogram import types, Dispatcher
-from tgBot.keyboard.reply import kb
+from tgBot.keyboard import kb
 
 # Обработка команды Старт
 async def welcome(message: types.Message):
