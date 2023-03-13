@@ -9,34 +9,39 @@ async def yes(callback_query: types.CallbackQuery):
     analysResult = analys_question(callback_query.message.text.split(':')[1])
 
     await callback_query.bot.edit_message_text(text=analysResult[0].split('\n')[0],
-                                chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                reply_markup=None)
+                                               chat_id=callback_query.message.chat.id,
+                                               message_id=callback_query.message.message_id,
+                                               reply_markup=None)
 
 async def no(callback_query: types.CallbackQuery):
     await callback_query.bot.edit_message_text(text='К сожалению, я не знаю ответа на ваш вопрос, но вы можете задать свой вопрос напрямую приемной комиссии, по форме:',
-                                chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                reply_markup=inline_kb_form)
+                                               chat_id=callback_query.message.chat.id,
+                                               message_id=callback_query.message.message_id,
+                                               reply_markup=inline_kb_form)
 
 # Заявление/Согласие на зачисление
 async def declaration(callback_query: types.CallbackQuery):
     await callback_query.bot.edit_message_text(text='Выберите уровень образования',
-                                chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                reply_markup=inline_kb_declaration)
+                                               chat_id=callback_query.message.chat.id,
+                                               message_id=callback_query.message.message_id,
+                                               reply_markup=inline_kb_declaration)
 
 async def consert(callback_query: types.CallbackQuery):
     await callback_query.bot.edit_message_text(text='Выберите уровень образования',
-                                chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                reply_markup=inline_kb_consert)
+                                               chat_id=callback_query.message.chat.id,
+                                               message_id=callback_query.message.message_id,
+                                               reply_markup=inline_kb_consert)
+
+async def back_to_main(callback_query: types.CallbackQuery, state: FSMContext):
+    await callback_query.bot.delete_message(chat_id=callback_query.message.chat.id,
+                                            message_id=callback_query.message.message_id)
+    await state.reset_data()
 
 async def back_to_help(callback_query: types.CallbackQuery):
     await callback_query.bot.edit_message_text(text='Выберите интересующую вас тему',
-                                chat_id=callback_query.message.chat.id,
-                                message_id=callback_query.message.message_id,
-                                reply_markup=inline_kb_help)
+                                               chat_id=callback_query.message.chat.id,
+                                               message_id=callback_query.message.message_id,
+                                               reply_markup=inline_kb_help)
 
 # Калькулятор ЕГЭ
 async def exam1(callback_query: types.CallbackQuery, state:FSMContext):
@@ -68,3 +73,6 @@ def register_callbacks(dispatcher:Dispatcher):
     dispatcher.register_callback_query_handler(callback=exam1,
                                                data_exam=True,
                                                state=ExamState.pre_exam)
+    dispatcher.register_callback_query_handler(callback=back_to_main,
+                                               data_to_main=True,
+                                               state='*')

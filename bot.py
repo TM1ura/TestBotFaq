@@ -3,7 +3,7 @@ import asyncio
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from tgBot.config import TOKEN
-from tgBot.filtres import FaqFilter, HelpFilter, TestFilter, CalculatorFilter, YesCallbackFilter, NoCallbackFilter, DeclarationFilter, ConsertFilter, ExamFilter, BackToHelpFilter
+from tgBot.filtres import FaqFilter, HelpFilter, TestFilter, CalculatorFilter, YesCallbackFilter, NoCallbackFilter, DeclarationFilter, ConsertFilter, ExamFilter, BackToHelpFilter, BackToMainFilter
 from tgBot.handlers import register_buttons, register_question, register_commands, register_callbacks, register_exams_scores
 from tgBot.services import check_db
 
@@ -39,6 +39,8 @@ async def register_all_filtres():
     dp.filters_factory.bind(callback=BackToHelpFilter,
                             event_handlers=[dp.callback_query_handlers])
     dp.filters_factory.bind(callback=ExamFilter,
+                            event_handlers=[dp.callback_query_handlers])
+    dp.filters_factory.bind(callback=BackToMainFilter,
                             event_handlers=[dp.callback_query_handlers])
 
 # Регистрация хендлеров

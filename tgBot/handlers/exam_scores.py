@@ -1,7 +1,7 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
 from tgBot.states import ExamState
-from tgBot.keyboard import inline_kb_exam
+from tgBot.keyboard import inline_kb_exam, inline_kb_back, inline_kb_dec_bachelor
 from tgBot.services import fetch_study_prog
 
 # Получение баллов для экзамена по рус.яз
@@ -13,7 +13,7 @@ async def pre_exam_score(message: types.Message, state: FSMContext):
                              reply_markup=inline_kb_exam)
 
     except ValueError:
-        await message.answer(text='Не правильное значение баллов ЕГЭ, попробуйте снова (указывайте только кол-во баллов, без слов)')
+        await message.answer(text='Не правильное значение баллов ЕГЭ, попробуйте снова (указывайте только кол-во баллов, без слов)', reply_markup=inline_kb_back)
 
     except:
         await message.answer(text='Произошла ошибка, попробуйте снова')
@@ -28,7 +28,7 @@ async def exam1_score(message: types.Message, state: FSMContext):
                              reply_markup=inline_kb_exam)
 
     except ValueError:
-        await message.answer(text='Не правильное значение баллов ЕГЭ, попробуйте снова (указывайте только кол-во баллов, без слов)')
+        await message.answer(text='Не правильное значение баллов ЕГЭ, попробуйте снова (указывайте только кол-во баллов, без слов)', reply_markup=inline_kb_back)
 
     except:
         await message.answer(text='Произошла ошибка, попробуйте снова')
@@ -40,7 +40,7 @@ async def exam2_score(message: types.Message, state: FSMContext):
         await state.update_data(exam2_score=score)
 
     except ValueError:
-        await message.answer(text='Не правильное значение баллов ЕГЭ, попробуйте снова (указывайте только кол-во баллов, без слов)')
+        await message.answer(text='Не правильное значение баллов ЕГЭ, попробуйте снова (указывайте только кол-во баллов, без слов)', reply_markup=inline_kb_back)
 
     except:
         await message.answer(text='Произошла ошибка, попробуйте снова')
@@ -54,7 +54,7 @@ async def exam2_score(message: types.Message, state: FSMContext):
                                             exam1_score=exams.get('exam1_score'),
                                             exam2_score=exams.get('exam2_score'))
 
-        await message.answer(text=study_prog)
+        await message.answer(text=study_prog, reply_markup=inline_kb_dec_bachelor)
         await state.reset_state()
 
 # Регистрация обработчиков сообщений

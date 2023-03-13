@@ -1,5 +1,5 @@
 from aiogram import types, Dispatcher
-from tgBot.keyboard import inline_kb_form, inline_kb_help, inline_kb_exam
+from tgBot.keyboard import inline_kb_form, inline_kb_help
 from tgBot.states import ExamState
 
 # Обработка кнопок

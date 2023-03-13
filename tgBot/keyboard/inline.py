@@ -6,6 +6,8 @@ inline_kb_declaration = InlineKeyboardMarkup(row_width=1)
 inline_kb_consert = InlineKeyboardMarkup(row_width=1)
 inline_kb_exam = InlineKeyboardMarkup(row_width=2)
 inline_kb_yes_no = InlineKeyboardMarkup(row_width=1)
+inline_kb_back = InlineKeyboardMarkup(row_width=1)
+inline_kb_dec_bachelor = InlineKeyboardMarkup(row_width=1)
 
 # Ссылки для webApp
 url_time = WebAppInfo(url='https://www.masu.edu.ru/abit/rules/application/')
@@ -18,8 +20,14 @@ help = InlineKeyboardButton('Сроки и правила подачи заяв�
 form = InlineKeyboardButton('Форма',
                             web_app=url_form)
 
+back = InlineKeyboardButton('Назад',
+                            callback_data='Back to main')
+
 back_to_help = InlineKeyboardButton('Назад',
                                     callback_data='Back to help')
+
+declaration_bachelor = InlineKeyboardButton('Заявление на поступление',
+                                    url='https://www.masu.edu.ru/upload/iblock/baf/5e4gwvoan7c3e46fb8lomy6s97myrwot/%D0%91%D0%BB%D0%B0%D0%BD%D0%BA%20%D0%B7%D0%B0%D1%8F%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D1%8F%20%D0%BD%D0%B0%20%D0%B1%D0%B0%D0%BA%D0%B0%D0%BB%D0%B0%D0%B2%D1%80%D0%B8%D0%B0%D1%82%20%D0%B8%20%D1%81%D0%BF%D0%B5%D1%86%D0%B8%D0%B0%D0%BB%D0%B8%D1%82%D0%B5%D1%82.doc')
 
 declaration = InlineKeyboardButton('Заявление на поступление',
                                    callback_data='Declaration')
@@ -79,6 +87,10 @@ inline_kb_help.add(help,
                    other_doc)
 
 inline_kb_form.add(form)
+
+inline_kb_back.add(back)
+
+inline_kb_dec_bachelor.add(declaration_bachelor)
 
 inline_kb_declaration.add(dec_bachelor,
                           dec_magistracy,

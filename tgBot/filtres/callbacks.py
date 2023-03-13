@@ -41,6 +41,27 @@ class ConsertFilter(BoundFilter):
             return self.data_consert is True
         return self.data_consert is False
 
+class BackToMainFilter(BoundFilter):
+    key = 'data_to_main'
+
+    def __init__(self, data_to_main: bool):
+        self.data_to_main = data_to_main
+    async def check(self, callback: CallbackQuery):
+        if callback.data == 'Back to main':
+            return self.data_to_main is True
+        return self.data_to_main is False
+
+    class BackToHelpFilter(BoundFilter):
+        key = 'data_to_help'
+
+        def __init__(self, data_to_help: bool):
+            self.data_to_help = data_to_help
+
+        async def check(self, callback: CallbackQuery):
+            if callback.data == 'Back to help':
+                return self.data_to_help is True
+            return self.data_to_help is False
+
 class BackToHelpFilter(BoundFilter):
     key = 'data_to_help'
 
@@ -50,6 +71,18 @@ class BackToHelpFilter(BoundFilter):
         if callback.data == 'Back to help':
             return self.data_to_help is True
         return self.data_to_help is False
+
+    class BackToHelpFilter(BoundFilter):
+        key = 'data_to_help'
+
+        def __init__(self, data_to_help: bool):
+            self.data_to_help = data_to_help
+
+        async def check(self, callback: CallbackQuery):
+            if callback.data == 'Back to help':
+                return self.data_to_help is True
+            return self.data_to_help is False
+
 class ExamFilter(BoundFilter):
     key = 'data_exam'
 
