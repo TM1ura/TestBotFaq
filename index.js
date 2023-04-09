@@ -2,7 +2,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const kb = require("./keyboard");
 const rate = require("./messageAnalys");
 
-const token = "5815919263:AAETy0dty_fBQOloBHKVSfs_BOuikFOkHGo";
+const token = "6195636497:AAEfAnC9YThZvuanb11r4zexbLB_jQLvk94";
 const bot = new TelegramBot(token, { polling: true });
 
 // Обработка команды Старт
