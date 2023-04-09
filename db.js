@@ -29,14 +29,17 @@ function checkDb(){
 
 function fetch_study_prog(exam1, exam2, exam1_score, exam2_score){
     let db = new sqlite3.Database('./exams.db')
-    let rows = db.each(`SELECT Направление 
+    let rows = [db.each(`SELECT Направление 
                         FROM StudyProg 
                         INNER JOIN Subjects as S on StudyProg.ЕГЭ_1 = S.id 
                         INNER JOIN Subjects as Sb on StudyProg.ЕГЭ_2 =Sb.id
                         INNER JOIN Subjects as Sbj on StudyProg.ЕГЭ_3 =Sbj.id  
                         WHERE ((S.Предмет = ${exam1} and S.Баллы <= ${exam1_score}) and ((Sb.Предмет = ${exam2} and Sb.Баллы <= ${exam2_score}) or (Sbj.Предмет = ${exam2} and Sbj.Баллы <= ${exam2_score}))) 
                             or ((S.Предмет = ${exam2} and S.Баллы <= ${exam2_score}) and ((Sb.Предмет = ${exam1} and Sb.Баллы <= ${exam1_score}) or (Sbj.Предмет = ${exam1} and Sbj.Баллы <= ${exam1_score})))
-                        ORDER BY ЕГЭ_1;`);
+                        ORDER BY ЕГЭ_1;`, (err, row) => {
+                            rows.join(row.Направление)
+                            return rows;
+                        })]
     return rows;
     // cursor = db.each(`SELECT Баллы
     //                     FROM Subjects

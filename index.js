@@ -1,7 +1,6 @@
 const{Telegraf, Scenes, session} = require('telegraf')
 const kb = require("./keyboard");
 const rate = require("./messageAnalys");
-
 require('dotenv').config()
 
 const preExamScene = require('./scenes')

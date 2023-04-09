@@ -1,6 +1,9 @@
 const {Markup, Composer, Scenes, Context} = require('telegraf')
 const kb = require("./keyboard");
+const db = require("./db")
 const sqlite3 = require('sqlite3');
+
+
 const startStep = new Composer()
 startStep.on("text", async ctx => {
     try{
@@ -54,33 +57,35 @@ examStep2.action(/exam:(.+)/, async ctx => {
 
 const examScoreStep2 = new Composer()
 examScoreStep2.on("text", async ctx => {
+
     try{
-        let db = new sqlite3.Database('./exams.db' , (err) => {
-            if(err)
-            {
-                console.log("Error Occurred - " + err.message);
-            }
-            else
-            {
-                console.log("DataBase Connected");
-            }
-        });
+        // let db = new sqlite3.Database('./exams.db' , (err) => {
+        //     if(err)
+        //     {
+        //         console.log("Error Occurred - " + err.message);
+        //     }
+        //     else
+        //     {
+        //         console.log("DataBase Connected");
+        //     }
+        // });
         ctx.wizard.state.data.examScore2= Number(ctx.message.text);
         await ctx.deleteMessage()
         await ctx.reply(`Вот направления, на которые вы можете поступить:`);
+        studyProg = db.fetch_study_prog(ctx.wizard.state.data.exam1, ctx.wizard.state.data.examScore1, ctx.wizard.state.data.exam2, ctx.wizard.state.data.examScore2)
         
-    
-        await db.each(`SELECT Направление 
-                            FROM StudyProg 
-                            INNER JOIN Subjects as S on StudyProg.ЕГЭ_1 = S.id 
-                            INNER JOIN Subjects as Sb on StudyProg.ЕГЭ_2 =Sb.id
-                            INNER JOIN Subjects as Sbj on StudyProg.ЕГЭ_3 =Sbj.id  
-                            WHERE ((S.Предмет = ${ctx.wizard.state.data.exam1} and S.Баллы <= ${ctx.wizard.state.data.examScore1}) and ((Sb.Предмет = ${ctx.wizard.state.data.exam2} and Sb.Баллы <= ${ctx.wizard.state.data.examScore2}) or (Sbj.Предмет = ${ctx.wizard.state.data.exam2} and Sbj.Баллы <= ${ctx.wizard.state.data.examScore2}))) 
-                                or ((S.Предмет = ${ctx.wizard.state.data.exam2} and S.Баллы <= ${ctx.wizard.state.data.examScore2}) and ((Sb.Предмет = ${ctx.wizard.state.data.exam1} and Sb.Баллы <= ${ctx.wizard.state.data.examScore1}) or (Sbj.Предмет = ${ctx.wizard.state.data.exam1} and Sbj.Баллы <= ${ctx.wizard.state.data.examScore1})))
-                            ORDER BY ЕГЭ_1;`, (err, row) => {
-                                ctx.reply(row.Направление)
-    
-                            });
+        console.log(studyProg)
+        // db.each(`SELECT Направление 
+        //                     FROM StudyProg 
+        //                     INNER JOIN Subjects as S on StudyProg.ЕГЭ_1 = S.id 
+        //                     INNER JOIN Subjects as Sb on StudyProg.ЕГЭ_2 =Sb.id
+        //                     INNER JOIN Subjects as Sbj on StudyProg.ЕГЭ_3 =Sbj.id  
+        //                     WHERE ((S.Предмет = ${ctx.wizard.state.data.exam1} and S.Баллы <= ${ctx.wizard.state.data.examScore1}) and ((Sb.Предмет = ${ctx.wizard.state.data.exam2} and Sb.Баллы <= ${ctx.wizard.state.data.examScore2}) or (Sbj.Предмет = ${ctx.wizard.state.data.exam2} and Sbj.Баллы <= ${ctx.wizard.state.data.examScore2}))) 
+        //                         or ((S.Предмет = ${ctx.wizard.state.data.exam2} and S.Баллы <= ${ctx.wizard.state.data.examScore2}) and ((Sb.Предмет = ${ctx.wizard.state.data.exam1} and Sb.Баллы <= ${ctx.wizard.state.data.examScore1}) or (Sbj.Предмет = ${ctx.wizard.state.data.exam1} and Sbj.Баллы <= ${ctx.wizard.state.data.examScore1})))
+        //                     ORDER BY ЕГЭ_1;`, (err, row) => {
+        //                         ctx.reply(row.Направление);
+
+        // });
         ctx.scene.leave();
     }catch (e) {
         await ctx.reply('Произошла ошибка')
